@@ -19,7 +19,8 @@ if (isset($_POST['simpan'])) {
     $insert = mysqli_query($koneksi, "INSERT INTO barang (nama_barang, stok) VALUES ('$nama', '$stok')");
     
     if ($insert) {
-        echo "<script>alert('Data berhasil disimpan!'); window.location='index.php';</script>";
+        // Bagian ini sudah diarahkan ke ibnu.php agar tidak error
+        echo "<script>alert('Data berhasil disimpan!'); window.location='ibnu.php';</script>";
     }
 }
 ?>
@@ -28,16 +29,19 @@ if (isset($_POST['simpan'])) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Inventory Sederhana</title>
+    <title>Sistem Inventory - Ibnu</title>
     <style>
-        body { font-family: sans-serif; margin: 40px; background-color: #f4f4f4; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f0f2f5; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        table, th, td { border: 1px solid #e0e0e0; padding: 12px; text-align: left; }
         th { background-color: #007bff; color: white; }
-        form { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
-        input { padding: 8px; margin-right: 10px; }
-        button { padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        form { margin-bottom: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px; }
+        input { padding: 10px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px; width: 200px; }
+        button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
     </style>
 </head>
 <body>
@@ -63,14 +67,20 @@ if (isset($_POST['simpan'])) {
             <?php
             $no = 1;
             $query = mysqli_query($koneksi, "SELECT * FROM barang ORDER BY id DESC");
-            while ($data = mysqli_fetch_array($query)) {
+            if(mysqli_num_rows($query) > 0){
+                while ($data = mysqli_fetch_array($query)) {
+                ?>
+                <tr>
+                    <td><?php echo $no++; ?></td>
+                    <td><?php echo $data['nama_barang']; ?></td>
+                    <td><?php echo $data['stok']; ?></td>
+                </tr>
+                <?php 
+                } 
+            } else {
+                echo "<tr><td colspan='3' style='text-align:center;'>Belum ada data barang.</td></tr>";
+            }
             ?>
-            <tr>
-                <td><?php echo $no++; ?></td>
-                <td><?php echo $data['nama_barang']; ?></td>
-                <td><?php echo $data['stok']; ?></td>
-            </tr>
-            <?php } ?>
         </tbody>
     </table>
 </div>

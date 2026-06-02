@@ -2,37 +2,30 @@
 
 namespace App\Services;
 
-use App\Models\Category;
-use Illuminate\Database\Eloquent\Collection;
-
 class CategoryService
 {
-    public function all(): Collection
+    public function all()
     {
-        return Category::all();
+        return [];
     }
 
-    public function find(int $id): Category
+    public function create(array $data)
     {
-        return Category::findOrFail($id);
+        return $data;
     }
 
-    public function create(array $data): Category
+    public function find($id)
     {
-        return Category::create($data);
+        return ['id' => $id];
     }
 
-    public function update(int $id, array $data): Category
+    public function update($id, array $data)
     {
-        $cat = Category::findOrFail($id);
-
-        $cat->update($data);
-
-        return $cat;
+        return $data;
     }
 
-    public function delete(int $id): void
+    public function delete($id)
     {
-        Category::destroy($id);
+        return true;
     }
 }

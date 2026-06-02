@@ -2,47 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\BaseController;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
+use App\Services\CategoryService;
+use Exception;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected CategoryService $svc;
+
+    public function __construct(CategoryService $svc)
+    {
+        $this->svc = $svc;
+    }
+
     public function index()
     {
-        //
+        return $this->success($this->svc->all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $req)
     {
-        //
+        $cat = $this->svc->create($req->validated());
+
+        return $this->success($cat, 'Kategori dibuat', 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        try {
+            $cat = $this->svc->find($id);
+
+            return $this->success($cat);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), 404);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateCategoryRequest $req, $id)
     {
-        //
+        $cat = $this->svc->update($id, $req->validated());
+
+        return $this->success($cat, 'Kategori diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $this->svc->delete($id);
+
+        return $this->success(null, 'Kategori dihapus', 204);
     }
 }

@@ -2,47 +2,79 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\BaseController;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
+use App\Services\CategoryService;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     public function index()
     {
-        //
+        return $this->success(
+            $this->categoryService->getAll(),
+            "Data kategori berhasil ditampilkan"
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        //
+        $category = $this->categoryService->create(
+            $request->validated()
+        );
+
+        return $this->success(
+            $category,
+            "Kategori berhasil dibuat",
+            201
+        );
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        try {
+            $category = $this->categoryService->findById($id);
+
+            return $this->success(
+                $category,
+                "Detail kategori berhasil ditampilkan"
+            );
+        } catch (\Exception $e) {
+            return $this->error(
+                $e->getMessage(),
+                404
+            );
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        //
+        $category = $this->categoryService->update(
+            $id,
+            $request->validated()
+        );
+
+        return $this->success(
+            $category,
+            "Kategori berhasil diperbarui"
+        );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $this->categoryService->delete($id);
+
+        return $this->success(
+            null,
+            "Kategori berhasil dihapus",
+            204
+        );
     }
 }

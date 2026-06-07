@@ -1,15 +1,33 @@
 <?php
 
-class UpdateCategoryRequest extends FormRequest {
-public function authorize() {
-    return true;
-}
+namespace App\Http\Requests;
 
-public function rules() {
-    $id = $this->route('category');
+use Illuminate\Foundation\Http\FormRequest;
 
-    return [
-        'name' => "required|string|unique:categories,name,{$id}"
-    ];
-}
+class UpdateCategoryRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        $input = $this->all();
+
+        array_walk($input, function (&$value) {
+            if (is_string($value)) {
+                $value = trim(strip_tags($value));
+            }
+        });
+
+        $this->merge($input);
+    }
+
+    public function rules()
+    {
+        return [
+            'name' => 'sometimes|string|max:255',
+        ];
+    }
 }

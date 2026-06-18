@@ -6,9 +6,15 @@ use App\Models\Item;
 
 class ItemService
 {
-    public function getAll()
+    public function getAll($categoryId = null)
     {
-        return Item::all();
+        $query = Item::query();
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        return $query->get();
     }
 
     public function findById($id)
@@ -25,6 +31,7 @@ class ItemService
     {
         $item = Item::findOrFail($id);
         $item->update($data);
+
         return $item;
     }
 

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ItemService;
-use Illuminate\Http\Request; // Pastikan ini di-import
+use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
@@ -14,14 +14,19 @@ class ItemController extends Controller
         $this->itemService = $itemService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json($this->itemService->getAll());
+        $items = $this->itemService->getAll($request->category_id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Items retrieved successfully',
+            'data' => $items
+        ]);
     }
 
-    public function store(Request $request) // Pakai Request biasa di sini
+    public function store(Request $request)
     {
-        // Validasi langsung di sini saja supaya simple
         $data = $request->validate([
             'name'        => 'required|string',
             'quantity'    => 'required|integer',
@@ -30,23 +35,41 @@ class ItemController extends Controller
         ]);
 
         $item = $this->itemService->create($data);
-        return response()->json($item, 201);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item created successfully',
+            'data' => $item
+        ], 201);
     }
 
     public function show($id)
     {
-        return response()->json($this->itemService->findById($id));
+        return response()->json([
+            'success' => true,
+            'message' => 'Item retrieved successfully',
+            'data' => $this->itemService->findById($id)
+        ]);
     }
 
     public function update(Request $request, $id)
     {
         $item = $this->itemService->update($id, $request->all());
-        return response()->json($item);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item updated successfully',
+            'data' => $item
+        ]);
     }
 
     public function destroy($id)
     {
         $this->itemService->delete($id);
-        return response()->json(['message' => 'Item deleted successfully']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item deleted successfully'
+        ]);
     }
 }

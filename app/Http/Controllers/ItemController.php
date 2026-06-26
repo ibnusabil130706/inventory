@@ -34,6 +34,7 @@ class ItemController extends Controller
             'category_id' => 'required|integer',
         ]);
 
+
         $item = $this->itemService->create($data);
 
         return response()->json([
